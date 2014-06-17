@@ -1,17 +1,22 @@
 package br.unb.cic.lp.gol;
 
 public class Cell {
-	private boolean alive = false;
+	private EstadoAbstrato estadoAtual;
 
 	public boolean isAlive() {
-		return alive;
+		return estadoAtual.isAlive(this);
 	}
 
 	public void kill() {
-		this.alive = false;
+		estadoAtual.kill(this);
 	}
 	
 	public void revive() {
-		this.alive = true;
+		estadoAtual.revive(this);
+	}
+	
+	public void setEstado(EstadoAbstrato proximoEstado)
+	{
+		estadoAtual = proximoEstado;
 	}
 }
