@@ -3,12 +3,8 @@ package br.unb.cic.lp.gol;
 public class Cell {
 	private EstadoAbstrato estado;
 
-	public void mudarEstado() {
-		estado.mudarEstado(this);
-	}
-
-	public boolean deveManterEstado() {		
-		return estado.deveManterEstado(this);
+	public boolean tentarMudarEstado() {		
+		return estado.tentarMudarEstado(this);
 	}
 		
 	public void setEstado(EstadoAbstrato proximoEstado)
@@ -23,6 +19,7 @@ public class Cell {
 		this.tabuleiro = tabuleiro;
 		this.setWidth(width);
 		this.setHeight(height);
+		this.setEstado(new EstadoMorto());
 	}
 	
 	private int x;

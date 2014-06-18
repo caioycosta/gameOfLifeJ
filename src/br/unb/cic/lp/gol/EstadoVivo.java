@@ -1,15 +1,8 @@
 package br.unb.cic.lp.gol;
 
 public class EstadoVivo extends EstadoAbstrato {
-
 	@Override
-	public void mudarEstado(Cell ctx) {
-		if (!deveManterEstado(ctx))
-			ctx.setEstado(new EstadoMorto());
-	}
-
-	@Override
-	public boolean deveManterEstado(Cell ctx) {
+	public boolean tentarMudarEstado(Cell ctx) {
 		int i, j;
 		Cell[][] cells;
 		
@@ -17,8 +10,16 @@ public class EstadoVivo extends EstadoAbstrato {
 		j = ctx.getX();
 		cells = ctx.getTabuleiro();
 		
-		return numberOfNeighborhoodAliveCells(i, j, cells, ctx) == 2 || 
-				numberOfNeighborhoodAliveCells(i, j, cells, ctx) == 3;
+		if ( numberOfNeighborhoodAliveCells(i, j, cells, ctx) == 2 || 
+				numberOfNeighborhoodAliveCells(i, j, cells, ctx) == 3)
+		{
+			return false;
+		}
+		else
+		{
+			ctx.setEstado(new EstadoPreMorto());
+			return true;
+		}
 	}	
 
 	/*
@@ -29,7 +30,8 @@ public class EstadoVivo extends EstadoAbstrato {
 		int alive = 0;
 		for (int a = i - 1; a <= i + 1; a++) {
 			for (int b = j - 1; b <= j + 1; b++) {
-				if (validPosition(a, b, ctx)  && (!(a==i && b == j)) && cells[a][b].getEstado() instanceof EstadoVivo) {
+				if (validPosition(a, b, ctx)  && (!(a==i && b == j)) && 
+						(cells[a][b].getEstado() instanceof EstadoPreMorto||cells[a][b].getEstado() instanceof EstadoVivo)) {
 					alive++;
 				}
 			}

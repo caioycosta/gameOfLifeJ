@@ -61,13 +61,13 @@ public class GameEngine {
 		List<Cell> deveMudar = new ArrayList<Cell>();
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				if (!cells[i][j].deveManterEstado())
+				if (cells[i][j].tentarMudarEstado())
 					deveMudar.add(cells[i][j]);
 			}
 		}
 
 		for (Cell cell : deveMudar) {
-			cell.mudarEstado();
+			cell.tentarMudarEstado();
 			if (cell.getEstado() instanceof EstadoMorto)
 				statistics.recordKill();
 			else
@@ -119,7 +119,7 @@ public class GameEngine {
 	public void makeCellAlive(int i, int j) throws InvalidParameterException {
 		if (validPosition(i, j)) {
 			if (cells[i][j].getEstado() instanceof EstadoMorto)
-				cells[i][j].mudarEstado();
+				cells[i][j].setEstado(new EstadoVivo());
 		} else {
 			new InvalidParameterException("Invalid position (" + i + ", " + j
 					+ ")");
