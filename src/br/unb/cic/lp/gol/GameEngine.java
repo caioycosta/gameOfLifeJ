@@ -38,10 +38,10 @@ public class GameEngine {
 
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				cells[i][j] = new Cell();
+				cells[i][j] = new Cell(j, i, cells, width, height);
 			}
 		}
-		
+
 		this.statistics = statistics;
 	}
 
@@ -58,78 +58,35 @@ public class GameEngine {
 	 * c) em todos os outros casos a celula morre ou continua morta.
 	 */
 	public void nextGeneration() {
-		List<Cell> mustRevive = new ArrayList<Cell>();
-		List<Cell> mustKill = new ArrayList<Cell>();
+		List<Cell> deveMudar = new ArrayList<Cell>();
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				if (shouldRevive(i, j)) {
-					mustRevive.add(cells[i][j]);
-				} 
-				else if ((!shouldKeepAlive(i, j)) && cells[i][j].isAlive()) {
-					mustKill.add(cells[i][j]);
-				}
+				if (!cells[i][j].deveManterEstado())
+					deveMudar.add(cells[i][j]);
 			}
 		}
-		
-		for (Cell cell : mustRevive) {
-			cell.revive();
-			statistics.recordRevive();
-		}
-		
-		for (Cell cell : mustKill) {
-			cell.kill();
-			statistics.recordKill();
-		}
-	}
-	
-	/**
-	 * Torna a celula de posicao (i, j) viva
-	 * 
-	 * @param i posicao vertical da celula
-	 * @param j posicao horizontal da celula
-	 * 
-	 * @throws InvalidParameterException caso a posicao (i, j) nao seja valida.
-	 */
-	public void makeCellAlive(int i, int j) throws InvalidParameterException {
-		if(validPosition(i, j)) {
-			cells[i][j].revive();
-			statistics.recordRevive();
-		}
-		else {
-			new InvalidParameterException("Invalid position (" + i + ", " + j + ")" );
-		}
-	}
-	
-	/**
-	 * Verifica se uma celula na posicao (i, j) estah viva.
-	 * 
-	 * @param i Posicao vertical da celula
-	 * @param j Posicao horizontal da celula
-	 * @return Verdadeiro caso a celula de posicao (i,j) esteja viva.
-	 * 
-	 * @throws InvalidParameterException caso a posicao (i,j) nao seja valida. 
-	 */
-	public boolean isCellAlive(int i, int j) throws InvalidParameterException {
-		if(validPosition(i, j)) {
-			return cells[i][j].isAlive();
-		}
-		else {
-			throw new InvalidParameterException("Invalid position (" + i + ", " + j + ")" );
+
+		for (Cell cell : deveMudar) {
+			cell.mudarEstado();
+			if (cell.getEstado() instanceof EstadoMorto)
+				statistics.recordKill();
+			else
+				statistics.recordRevive();
 		}
 	}
 
 	/**
-	 * Retorna o numero de celulas vivas no ambiente. 
-	 * Esse metodo eh particularmente util para o calculo de 
-	 * estatisticas e para melhorar a testabilidade.
+	 * Retorna o numero de celulas vivas no ambiente. Esse metodo eh
+	 * particularmente util para o calculo de estatisticas e para melhorar a
+	 * testabilidade.
 	 * 
-	 * @return  numero de celulas vivas.
+	 * @return numero de celulas vivas.
 	 */
 	public int numberOfAliveCells() {
 		int aliveCells = 0;
-		for(int i = 0; i < height; i++) {
-			for(int j = 0; j < width; j++) {
-				if(isCellAlive(i,j)) {
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				if (cells[i][j].getEstado() instanceof EstadoVivo) {
 					aliveCells++;
 				}
 			}
@@ -137,43 +94,8 @@ public class GameEngine {
 		return aliveCells;
 	}
 
-	/* verifica se uma celula deve ser mantida viva */
-	private boolean shouldKeepAlive(int i, int j) {
-		return (cells[i][j].isAlive())
-				&& (numberOfNeighborhoodAliveCells(i, j) == 2 || numberOfNeighborhoodAliveCells(i, j) == 3);
-	}
-
-	/* verifica se uma celula deve (re)nascer */
-	private boolean shouldRevive(int i, int j) {
-		return (!cells[i][j].isAlive())
-				&& (numberOfNeighborhoodAliveCells(i, j) == 3);
-	}
-
-	/*
-	 * Computa o numero de celulas vizinhas vivas, dada uma posicao no ambiente
-	 * de referencia identificada pelos argumentos (i,j).
-	 */
-	private int numberOfNeighborhoodAliveCells(int i, int j) {
-		int alive = 0;
-		for (int a = i - 1; a <= i + 1; a++) {
-			for (int b = j - 1; b <= j + 1; b++) {
-				if (validPosition(a, b)  && (!(a==i && b == j)) && cells[a][b].isAlive()) {
-					alive++;
-				}
-			}
-		}
-		return alive;
-	}
-
-	/*
-	 * Verifica se uma posicao (a, b) referencia uma celula valida no tabuleiro.
-	 */
-	private boolean validPosition(int a, int b) {
-		return a >= 0 && a < height && b >= 0 && b < width;
-	}
-
 	/* Metodos de acesso as propriedades height e width */
-	
+
 	public int getHeight() {
 		return height;
 	}
@@ -188,5 +110,23 @@ public class GameEngine {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public boolean isCellAlive(int i, int j) {
+		return cells[i][j].getEstado() instanceof EstadoVivo;
+	}
+
+	public void makeCellAlive(int i, int j) throws InvalidParameterException {
+		if (validPosition(i, j)) {
+			if (cells[i][j].getEstado() instanceof EstadoMorto)
+				cells[i][j].mudarEstado();
+		} else {
+			new InvalidParameterException("Invalid position (" + i + ", " + j
+					+ ")");
+		}
+	}
+	
+	private boolean validPosition(int a, int b) {
+		return a >= 0 && a < height && b >= 0 && b < width;
 	}
 }
