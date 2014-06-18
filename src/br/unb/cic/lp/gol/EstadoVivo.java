@@ -31,7 +31,7 @@ public class EstadoVivo extends EstadoAbstrato {
 		for (int a = i - 1; a <= i + 1; a++) {
 			for (int b = j - 1; b <= j + 1; b++) {
 				if (validPosition(a, b, ctx)  && (!(a==i && b == j)) && 
-						(cells[a][b].getEstado() instanceof EstadoPreMorto||cells[a][b].getEstado() instanceof EstadoVivo)) {
+						(cells[a][b].getEstado() instanceof EstadoVivo)) {
 					alive++;
 				}
 			}
