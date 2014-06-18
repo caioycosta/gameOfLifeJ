@@ -6,13 +6,15 @@ public class Cell {
 	public boolean tentarMudarEstado() {		
 		return estado.tentarMudarEstado(this);
 	}
-		
+	
+	private TemplateRegraGoL regra;
+	
 	public void setEstado(EstadoAbstrato proximoEstado)
 	{
 		estado = proximoEstado;
 	}
 	
-	public Cell(int x, int y, Cell[][] tabuleiro, int width, int height)
+	public Cell(int x, int y, Cell[][] tabuleiro, int width, int height,TemplateRegraGoL regra)
 	{
 		this.x = x;
 		this.y = y;
@@ -20,6 +22,7 @@ public class Cell {
 		this.setWidth(width);
 		this.setHeight(height);
 		this.setEstado(new EstadoMorto());
+		this.setRegra(regra);
 	}
 	
 	private int x;
@@ -101,6 +104,18 @@ public class Cell {
 	public EstadoAbstrato getEstado() {
 		return this.estado;
 	}
-	
-	
+
+	/**
+	 * @return the regra
+	 */
+	public TemplateRegraGoL getRegra() {
+		return regra;
+	}
+
+	/**
+	 * @param regra the regra to set
+	 */
+	public void setRegra(TemplateRegraGoL regra) {
+		this.regra = regra;
+	}		
 }
