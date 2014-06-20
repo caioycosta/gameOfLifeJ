@@ -12,6 +12,7 @@ public class GameView {
 	private static final String LINE = "+-----+";
 	private static final String DEAD_CELL = "|     |";
 	private static final String ALIVE_CELL = "|  o  |";
+	private static final String X_CELL = "|  x  |";
 	
 	private static final int INVALID_OPTION = 0;
 	private static final int MAKE_CELL_ALIVE = 1;
@@ -38,7 +39,9 @@ public class GameView {
 		printLine();
 		for (int i = 0; i < engine.getHeight(); i++) {
 			for (int j = 0; j < engine.getWidth(); j++) {
-				System.out.print(engine.isCellAlive(i, j) ? ALIVE_CELL : DEAD_CELL);
+				System.out.print(engine.estadoCelula(i, j) instanceof EstadoVivoX ? X_CELL :
+					engine.estadoCelula(i, j) instanceof EstadoVivo ?
+					ALIVE_CELL : DEAD_CELL);
 			}
 			System.out.println("   " + i);
 			printLine();

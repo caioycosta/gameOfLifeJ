@@ -38,7 +38,7 @@ public class GameEngine {
 
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				cells[i][j] = new Cell(j, i, cells, width, height, new RegraGoLPadrao());
+				cells[i][j] = new Cell(j, i, cells, width, height, new RegraGoLEstado());
 			}
 		}
 
@@ -114,6 +114,11 @@ public class GameEngine {
 
 	public boolean isCellAlive(int i, int j) {
 		return cells[i][j].getEstado() instanceof EstadoVivo;
+	}
+	
+	public EstadoAbstrato estadoCelula(int i, int j)
+	{
+		return cells[i][j].getEstado();
 	}
 
 	public void makeCellAlive(int i, int j) throws InvalidParameterException {
