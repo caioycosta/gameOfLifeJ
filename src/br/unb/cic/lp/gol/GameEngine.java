@@ -38,7 +38,7 @@ public class GameEngine {
 
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				cells[i][j] = new Cell(j, i, cells, width, height, new RegraGoLEstado());
+				cells[i][j] = new Cell(j, i, cells, width, height, new RegraHighLife());
 			}
 		}
 
