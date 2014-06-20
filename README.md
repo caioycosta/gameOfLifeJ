@@ -17,6 +17,8 @@ A RegraHighLife é idêntica à regra padrão, com a adição de que uma célula
 A RegraGoLEstado serve para testar o padrão State, e é idêntica à padrão, só que células que estão vivas há mais de uma geração se 
 tornam um "X" .
 
+As regras foram implementadas através de uma tabela de transições.
+
 Para trocar a regra, modificar a chamada ao construtor da classe Tabuleiro, no construtor da classe GameEngine.
 
 O tabuleiro cresce infinitamente de acordo com a necessidade. 
