@@ -18,6 +18,10 @@ public class GameView {
 	private static final int MAKE_CELL_ALIVE = 1;
 	private static final int NEXT_GENERATION = 2;
 	private static final int HALT = 3; 
+	private static final int RIGHT = 4;
+	private static final int LEFT = 5;
+	private static final int UP = 6; 
+	private static final int DOWN = 7; 
 
 	private GameEngine engine;
 	private GameController controller;
@@ -37,8 +41,8 @@ public class GameView {
 	public void update() {
 		printFirstRow();
 		printLine();
-		for (int i = 0; i < engine.getHeight(); i++) {
-			for (int j = 0; j < engine.getWidth(); j++) {
+		for (int i = engine.getWindowY(); i < (engine.getWindowY() + engine.getWindowHeight()); i++) {
+			for (int j = engine.getWindowX(); j < (engine.getWindowX() + engine.getWindowWidth()); j++) {
 				System.out.print(engine.estadoCelula(i, j) instanceof EstadoVivoX ? X_CELL :
 					engine.estadoCelula(i, j) instanceof EstadoVivo ?
 					ALIVE_CELL : DEAD_CELL);
@@ -59,6 +63,7 @@ public class GameView {
 			System.out.println("[1] Make a cell alive");
 			System.out.println("[2] Next generation");
 			System.out.println("[3] Halt");
+			System.out.println("[WASD] Mover tabuleiro");
 		
 			System.out.print("\n \n Option: ");
 			
@@ -69,6 +74,10 @@ public class GameView {
 			case MAKE_CELL_ALIVE : makeCellAlive(); break;
 			case NEXT_GENERATION : nextGeneration(); break;
 			case HALT : halt();
+			case UP: moveUp(); break;
+			case RIGHT: moveRight(); break;
+			case DOWN: moveDown(); break;
+			case LEFT: moveLeft(); break;
 		}
 	}
 	
@@ -97,6 +106,23 @@ public class GameView {
 		controller.halt();
 	}
 	
+	private void moveUp()
+	{
+		controller.moveUp();
+	}
+	private void moveDown()
+	{
+		controller.moveDown();
+	}
+	private void moveLeft()
+	{
+		controller.moveLeft();
+	}
+	private void moveRight()
+	{
+		controller.moveRight();
+	}
+	
 	private boolean validPosition(int i, int j) {
 		System.out.println(i);
 		System.out.println(j);
@@ -112,13 +138,25 @@ public class GameView {
 		}
 		else if (option.equals("3")) {
 			return HALT;
+		} 
+		else if(option.equals("W") ||option.equals("w") ) {
+			return UP;
+		}
+		else if (option.equals("A")||option.equals("a")) {
+			return LEFT;
+		}
+		else if (option.equals("S")||option.equals("s")) {
+			return DOWN;
+		}
+		else if (option.equals("D")||option.equals("d")) {
+			return RIGHT;
 		}
 		else return INVALID_OPTION;
 	}
 
 	/* Imprime uma linha usada como separador das linhas do tabuleiro */
 	private void printLine() {
-		for (int j = 0; j < engine.getWidth(); j++) {
+		for (int j = 0; j < engine.getWindowWidth(); j++) {
 			System.out.print(LINE);
 		}
 		System.out.print("\n");
@@ -129,7 +167,7 @@ public class GameView {
 	 */
 	private void printFirstRow() {
 		System.out.println("\n \n");
-		for (int j = 0; j < engine.getWidth(); j++) {
+		for (int j = engine.getWindowX(); j < engine.getWindowWidth()+engine.getWindowX(); j++) {
 			System.out.print("   " + j + "   ");
 		}
 		System.out.print("\n");

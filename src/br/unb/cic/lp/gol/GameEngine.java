@@ -17,9 +17,8 @@ import java.util.List;
  * @author rbonifacio
  */
 public class GameEngine {
-	private int height;
-	private int width;
-	private Cell[][] cells;
+	Tabuleiro tabuleiro;
+	
 	private Statistics statistics;
 
 	/**
@@ -31,20 +30,48 @@ public class GameEngine {
 	 *            dimentsao horizontal do ambiente
 	 */
 	public GameEngine(int height, int width, Statistics statistics) {
-		this.height = height;
-		this.width = width;
-
-		cells = new Cell[height][width];
-
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				cells[i][j] = new Cell(j, i, cells, width, height, new RegraHighLife());
-			}
-		}
-
+		this.tabuleiro = new Tabuleiro(height, width, new RegraGoLPadrao());
 		this.statistics = statistics;
 	}
 
+	public int getWindowWidth()
+	{
+		return 10;
+	}
+	
+	public int getWindowHeight()
+	{
+		return 10;
+	}
+	
+	public int getWindowY()
+	{
+		return tabuleiro.getWindowY();
+	}
+	
+	public int getWindowX()
+	{
+		return tabuleiro.getWindowX();
+	}
+	
+	public void moveUp()
+	{
+		if (tabuleiro.getWindowY() > 0) tabuleiro.setWindowY(tabuleiro.getWindowY()-1);
+		
+	}
+	public void moveDown()
+	{
+		if (tabuleiro.getWindowY() + 10 < tabuleiro.getHeight()) tabuleiro.setWindowY(tabuleiro.getWindowY()+1);
+	}
+	public void moveLeft()
+	{
+		if (tabuleiro.getWindowX() > 0) tabuleiro.setWindowX(tabuleiro.getWindowX()-1);
+	}
+	public void moveRight()
+	{
+		if (tabuleiro.getWindowX() + 10 < tabuleiro.getWidth()) tabuleiro.setWindowX(tabuleiro.getWindowX()+1);
+	}
+	
 	/**
 	 * Calcula uma nova geracao do ambiente. Essa implementacao utiliza o
 	 * algoritmo do Conway, ou seja:
@@ -58,11 +85,13 @@ public class GameEngine {
 	 * c) em todos os outros casos a celula morre ou continua morta.
 	 */
 	public void nextGeneration() {
+		tabuleiro.checarCrescimento();
+		
 		List<Cell> deveMudar = new ArrayList<Cell>();
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (cells[i][j].tentarMudarEstado())
-					deveMudar.add(cells[i][j]);
+		for (int i = 0; i < tabuleiro.getHeight(); i++) {
+			for (int j = 0; j < tabuleiro.getWidth(); j++) {
+				if ( tabuleiro.getCell(i,j).tentarMudarEstado())
+					deveMudar.add(tabuleiro.getCell(i,j));
 			}
 		}
 
@@ -84,9 +113,9 @@ public class GameEngine {
 	 */
 	public int numberOfAliveCells() {
 		int aliveCells = 0;
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (cells[i][j].getEstado() instanceof EstadoVivo) {
+		for (int i = 0; i < tabuleiro.getHeight(); i++) {
+			for (int j = 0; j < tabuleiro.getWidth(); j++) {
+				if (tabuleiro.getCell(i,j).getEstado() instanceof EstadoVivo) {
 					aliveCells++;
 				}
 			}
@@ -97,34 +126,27 @@ public class GameEngine {
 	/* Metodos de acesso as propriedades height e width */
 
 	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+		return tabuleiro.getHeight();
 	}
 
 	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
+		return tabuleiro.getWidth();
 	}
 
 	public boolean isCellAlive(int i, int j) {
-		return cells[i][j].getEstado() instanceof EstadoVivo;
+		return tabuleiro.getCell(i,j).getEstado() instanceof EstadoVivo;
 	}
 	
 	public EstadoAbstrato estadoCelula(int i, int j)
 	{
-		return cells[i][j].getEstado();
+		return tabuleiro.getCell(i,j).getEstado();
 	}
 
 	public void makeCellAlive(int i, int j) throws InvalidParameterException {
+		
 		if (validPosition(i, j)) {
-			if (cells[i][j].getEstado() instanceof EstadoMorto)
-				cells[i][j].setEstado(new EstadoVivo());
+			if (tabuleiro.getCell(i,j).getEstado() instanceof EstadoMorto)
+				tabuleiro.getCell(i,j).setEstado(new EstadoVivo());
 		} else {
 			new InvalidParameterException("Invalid position (" + i + ", " + j
 					+ ")");
@@ -132,6 +154,6 @@ public class GameEngine {
 	}
 	
 	private boolean validPosition(int a, int b) {
-		return a >= 0 && a < height && b >= 0 && b < width;
+		return a >= 0 && a < tabuleiro.getHeight() && b >= 0 && b < tabuleiro.getWidth();
 	}
 }

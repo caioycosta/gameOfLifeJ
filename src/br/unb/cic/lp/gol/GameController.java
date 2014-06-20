@@ -61,4 +61,24 @@ public class GameController {
 		board.update();
 	}
 	
+	public void moveUp()
+	{
+		engine.moveUp();
+		board.update();
+	}
+	public void moveDown()
+	{
+		engine.moveDown();
+		board.update();
+	}
+	public void moveLeft()
+	{
+		engine.moveLeft();
+		board.update();
+	}
+	public void moveRight()
+	{
+		engine.moveRight();
+		board.update();
+	}
 }
